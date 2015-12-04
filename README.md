@@ -7,5 +7,5 @@ clone it to local.run ``cabal sandbox init`` to download repos.
 ## How to run it
 open terminal, local to program folder. run ``cabal run``.
 
-## What your can't do
+## What you can't do
 Don't submit your code to **master** branch!!!
