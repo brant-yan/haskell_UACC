@@ -1,0 +1,12 @@
+name:              UACC
+version:           1.0
+Build-Type:        Simple
+cabal-version:     >= 1.2
+
+executable TestHaskell
+  main-is:         Main.hs
+  hs-source-dirs:  src
+  build-depends:   base >= 4.8.1.0,
+                   bytestring >= 0.10.6.0,
+                   containers >= 0.5.6.2
+                   
