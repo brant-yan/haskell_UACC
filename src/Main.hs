@@ -5,6 +5,8 @@ import System.IO
 import MemoryCache
 import Domain
 import Business.General
+import Domain.UserInfo
+import Domain.ProjectInfo
 
 consoleMessage::[String]
 consoleMessage = [
@@ -16,8 +18,8 @@ consoleMessage = [
         ]
 
 
-mainloop :: UserState -> ProjectState -> IO ()
-mainloop us@(UserState uss) ps@(ProjectState pss) = do
+mainloop :: UserState -> ProjectState -> UserBindProjectState -> IO ()
+mainloop us@(UserState uss) ps@(ProjectState pss) u_p@(UserBindProjectState u_p_s) = do
     showMessage ["Please input 0,1,2,3,4"]
     cmd <- getLine
     case cmd of
@@ -27,47 +29,34 @@ mainloop us@(UserState uss) ps@(ProjectState pss) = do
        _ -> do 
             case cmd of 
                  "1" ->  inserUser us
-                 "2" ->  userLogin us
+                 "2" ->  userLogin us ps u_p
                  "3" ->  showMessage ["Input User username"]
                  "4" ->  copyMVar uss >>= toString >>= putStrLn.unlines
                  otherwise -> showMessage ["Error Cmd"]
-            mainloop us ps
+            mainloop us ps u_p
             
-
-    
-
-
 main :: IO ()
 main = do
     ius <- initUserInfo
     pus <- initProjectInfo
+    u_p <- initUserBindProjectInfo
     showMessage ["Welcome to Haskell sso"]
     showMessage consoleMessage
-    mainloop ius pus
+    mainloop ius pus u_p
        
-    
-showUser :: UserState -> IO ()
-showUser (UserState us) = do
-    putStrLn "AllUser:"
-    m <- takeMVar us
-    print m
-    return ()
-    
+        
 inserUser :: UserState -> IO ()
 inserUser u@(UserState us)= do
     showMessage ["Input User Information"]
     userInfo <- getLine
     case words userInfo of
         [username,password,firstname,secondname] -> do
-           let user= User{username=username,password=password,firstName=firstname,secondName=secondname}
+           let user= User username password firstname secondname
            insertOne us user
         otherwise -> error "error user information"
     return ()
 
-chechProjectByUserId :: UserId->[(UserId,ProjectId)]->ProjectMap  -> Either ErrorMessage Bool
-chechProjectByUserId uid ups pmap = case runParse toTransUser uid ups pmap  of
-                                        Left s -> Left s
-                                        Right _ -> Right True
+
 
 testU = 1
 testUPs = [(1,1)]
